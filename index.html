@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translater</title>
+
+    <style>
+
+       
+#container{
+    
+    border: 1px solid teal;
+    display: flex;
+   
+    background-image: url("https://th.bing.com/th/id/OIP.v6Y0uPmRKjzsrkqZxzYowgHaEK?pid=ImgDet&rs=1");
+
+    
+}
+#inp, #out{
+    background-color: gold;
+    color: white;
+ 
+}
+
+
+
+
+#upper,#lower{
+    flex: 1;
+    height: 600px;
+    margin: 5%;
+}
+
+#lower{
+   color: white;
+   font-size: larger;
+   font-weight: bolder;
+}
+#text{
+    height: 300px;
+    margin-top: 50px;
+    width: 90%;
+    font-size: larger;
+    
+
+}
+
+
+    </style>
+</head>
+<body>
+
+<div id="container">
+
+<div id="upper">
+
+<select name="" id="inp">
+    <option value="en">ENGLISH</option>
+    <option value="hi">HINDI</option>
+</select>
+<textarea name="" id="text" cols="30" rows="10" oninput="debouncing(main,500)"></textarea>
+
+</div>
+<div id="lower">
+
+<select name="" id="out">
+
+<option value="hi">HINDI</option>
+<option value="en">ENGLISH</option>
+
+</select>
+
+<p id="para"></p>
+</div>
+
+
+</div>
+    
+</body>
+</html>
+<script>
+
+//helping function 
+
+let Forvalue = (id)=>{
+return document.getElementById(id).value;
+}
+
+let Forappend = (id)=>{
+    return document.getElementById(id)
+}
+
+let id ;
+async function show(){
+
+    try{
+    
+      
+    let input = Forvalue("text")    
+    let inp = Forvalue("inp")
+    let out = Forvalue("out")
+    
+
+    const res = await fetch("https://libretranslate.de/translate",{
+    method:"POST",
+
+    body: JSON.stringify({
+        q:input,
+        source:inp,
+        target:out,
+        format :"text",
+    }),
+headers:{
+
+    "Content-Type":"application/json",
+},
+
+});
+const data = await res.json();
+
+
+console.log('data:', data)
+
+
+
+    return data;
+
+
+
+
+}
+
+
+catch(err){
+    console.log('err:', err)
+
+}
+
+}
+
+let append = (el)=>{
+ 
+
+let p = document.querySelector("#para")
+p.textContent = el.translatedText;
+
+}
+
+
+async function main(){
+
+let data = await show()
+
+if(data === undefined){
+    return false
+}
+
+append(data)
+
+}
+
+let debouncing = (func,delay)=>{
+
+if(id){
+
+    clearTimeout(id)
+    
+}
+
+id = setTimeout(()=>{
+    func();
+
+},delay)
+
+}
+
+
+
+</script>
